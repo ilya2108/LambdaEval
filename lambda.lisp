@@ -1,9 +1,12 @@
-;first try
+;first try, x - value, y - bounded variable, z - expression
 (defun mySubst (x y z)
 
+
   (cond ((atom z)
+  		;substitues current z by x 
          (cond ((eq z y) x)
                ('t z)))
+  		;goes recursively through all expression
         ('t (cons (mySubst x y (car z))
                   (mySubst x y (cdr z ))))))
 
