@@ -1,26 +1,19 @@
-;first try, x - value, y - bounded variable, z - expression
-(defun mySubst (x y z)
 
-
-  (cond ((atom z)
-  		;substitues current z by x 
-         (cond ((eq z y) x)
-               ('t z)))
-  		;goes recursively through all expression
-        ('t (cons (mySubst x y (car z))
-                  (mySubst x y (cdr z ))))))
-
-
-(defun myEval (args body params) 
-	(
-		;evaluate lambda with given value
-		eval (
-			;cons lambda function with values
-			cons (
-				;forming lambda of bounded variables and body
-				list 'lambda args body) params
+(defun notBound (args body tmp)
+  (cond
+    ;exit from recursion
+    ((not (car body)) tmp)
+    ;goes recursively through nested lambdas
+    ((listp (car body))
+    	(notBound args (cdr body) (append tmp (list (f args (car body) '()))))
+    ((atom (car body))
+    	(if (member (car body) args) 
+    		;ignore element from list of bounded variables 
+    		(notBound args (cdr body) tmp)
+    		;append to accumulator
+    		(notBound args (cdr body) (append tmp (list (car body))))
 		)
-	)
+	))
 )
-;usage: (fn '(x y z) '(+ x (* y z)) '(1 2 3))
-;(fn '(x f) '(if (= x 1) 1 (* x (funcall f (- x 1) f))) '(5 (lambda (x f) (if (= x 1) 1 (* x (funcall f (- x 1) f))))))
+
+
